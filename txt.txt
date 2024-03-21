@@ -1,0 +1,113 @@
+  	 protected function sendEmail($name, $email, $unix_id)
+{
+
+    //Load Composer's autoloader
+    require '../vendor/autoload.php';
+
+    try {
+        // code...
+        $mail = new PHPMailer(true);
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+        $mail->isSMTP();                                            //Send using SMTP
+        $mail->Host       = 'smtp.gmail.com';                       //Set the SMTP server to send through
+        $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+        $mail->Username   = 'joshuaadeyemi445@gmail.com';           //SMTP username
+        $mail->Password   = 'zfqqiuyjflogdmqq';                     //App-specific password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->Port       = 465;                                    //TCP port to connect to
+
+        //Recipients
+        $mail->setFrom('joshuaadeyemi445@gmail.com', $name);
+        $mail->addAddress($email);    
+
+        //Content
+        $mail->isHTML(true);                                  //Set email format to HTML
+        $mail->Subject = 'You have choose a free plan ';
+        $email_template  = "It time to express the journey of endless news and updates! ". $name ." <p>Unique Id</p> " . $unix_id . "<br/>" ."
+         <a href='http://localhost/africtvApi/home.php'>Click here</a>
+         <br/><b>AfricTv Team</b>
+         ";
+        $mail->Body = $email_template;
+        
+        // Attempt to send the email
+        if ($mail->send()) {
+          header("location: ../subscription.php?status=emailsent");
+        } else {
+            header("location: ../subscription.php?status=sentemailfailed". $mail->ErrorInfo);
+        }
+    } catch (Exception $e) {
+       header("location: ../subscription.php?status=sentemailfailed&error=" . urlencode($mail->ErrorInfo));
+
+    }
+}
+
+0909999999
+
+
+
+
+environment  variable
+
+
+
+
+
+check this and use this to fetch out the file from the database and the file location in my project protected function setPost($name, $email, $unix_id, $body, $Intro, $extra_paragraph, $file, $category, $source, $tags, $essentials_link, $share_url) {
+{   
+    // Check if a file was uploaded
+    if(isset($_FILES['file'])) {
+    $file_name = $_FILES['file']['name'];
+    $file_tmp = $_FILES['file']['tmp_name'];
+    $file_type = $_FILES['file']['type'];
+
+    // Array of allowed image and video file types
+    $allowed_image_types = array('image/jpeg', 'image/png', 'image/gif');
+    $allowed_video_types = array('video/mp4', 'video/mpeg', 'video/quicktime');
+
+    // Check if the uploaded file type is allowed
+    if(in_array($file_type, $allowed_image_types)) {
+        // File is an image
+        $uploadDirectory = '../image_uploads/';
+    } elseif (in_array($file_type, $allowed_video_types)) {
+        // File is a video
+        $uploadDirectory = '../video_uploads/';
+    } else {
+        // File type is not allowed
+        header("location: ../post.php?status=invalidfiletype");
+        exit();
+    }
+
+
+        // Generate a unique name for the file
+        $uniqueFileName = uniqid() . '_' . $file_name;
+
+        // Move the uploaded file to the server
+        $uploadPath = $uploadDirectory . $uniqueFileName;
+        if(move_uploaded_file($file_tmp, $uploadPath)) {
+          
+
+            // Insert the unique filename into the database
+           $stmt = $this->connect()->prepare('INSERT INTO posts (name, email, unix_id, body, Intro, extra_paragraph, imgvid_part, category, source, tags, essentials_link, share_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);');
+
+               if ($stmt->execute(array($name, $email, $unix_id, $body, $Intro, $extra_paragraph, $uniqueFileName, $category, $source, implode(',', $tags), $essentials_link, $share_url))) {
+                  // File upload successful, now send email
+                  $this->sendEmail($name, $email, $Intro, $uniqueFileName, $share_url);
+                // Success: redirect to home page
+                header("location: ../home.php?status=postsuccess");
+                exit();
+            } else {
+                // Database insertion failed
+                header("location: ../post.php?status=stmtfailed");
+                exit();
+            }
+        } else {
+            // File upload failed
+            header("location: ../post.php?status=fileuploadfailed");
+            exit();
+        }
+    } else {
+        // No file uploaded
+        header("location: ../post.php?status=nofileuploaded");
+        exit();
+    }
+}
