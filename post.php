@@ -13,6 +13,7 @@
     <div class="post-form-container">
         <h2>Post Form</h2>
         <form id="post-form" action="includes/post.inc.php" method="POST" enctype="multipart/form-data">
+            
             <input type="hidden" name="name" placeholder="Profile Title" value="<?php echo $_SESSION['name']; ?>"><br><br>
             <input type="hidden" name="email" placeholder="Profile Title" value="<?php echo $_SESSION['email']; ?>"><br><br>
             <input type="hidden" name="unix_id" placeholder="Profile Title" value="<?php echo $_SESSION['unix_id']; ?>"><br><br> 

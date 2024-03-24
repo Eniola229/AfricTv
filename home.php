@@ -74,6 +74,9 @@ session_start();
   .card-header {
     padding: 15px;
     border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
   }
   .card-header h3 {
     margin: 0;
@@ -101,8 +104,26 @@ session_start();
   width: 100%;
   height: auto;
   border-radius: 8px;
-  /* Add more styles as needed */
 }
+
+.comment-section {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    .comment-section label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .comment-section p {
+        color: #888;
+    }
+    .comment-section input[type="file"] {
+        margin-top: 5px;
+    }
+
     </style>
 </head>
 <body>

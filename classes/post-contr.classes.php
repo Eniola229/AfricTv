@@ -4,7 +4,7 @@ class PostContr extends Post {
         // Validation
         if (empty($Intro) && empty($_FILES['file']['name'])) {
             // Both body and file are empty
-            header("location: ../post.php?status=imgorbodyrequired");
+            header("location: ../post.php?status=imgorintrorequired");
             exit();
         }
 
@@ -12,7 +12,7 @@ class PostContr extends Post {
         $this->setPost($name, $email, $unix_id, $body, $Intro, $extra_paragraph, $file, $category, $source, $tags, $essentials_link, $share_url);
 
         // Redirect to success page
-        header("location: ../success.php");
+        header("location: ../home.php?status=postsuccess");
         exit();
     }
 }
