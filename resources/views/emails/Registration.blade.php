@@ -10,6 +10,5 @@
     <p>Thank you for registering with AfricTv. We're excited to have you on board!</p>
     <p>Start the journey into the world of <bold> INFORMATION, INNOVATION, EDUCATION AND LOT MORE</bold></p>
     <a href="#">Click Here to Login</a>
-    <!-- Add any other content here -->
 </body>
 </html>

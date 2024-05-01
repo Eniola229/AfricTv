@@ -16,6 +16,7 @@ Route::post("login", [ApiController::class, "login"]);
 Route::group([
     "middleware" => ["auth:api"]
 ], function(){
+    Route::post("payment", [ApiController::class, "payment"]);
     Route::get("profile", [ApiController::class, "profile"]);
     Route::get("logout", [ApiController::class, "logout"]);
 });

@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\RegistrationMail;
+use App\Mail\LoginMail;
+use App\Mail\MeduimPaymentMail;
+use App\Mail\PremuimPaymentMail;
 use Illuminate\Support\Facades\Mail;
 use MailerSend\MailerSend;
 use Illuminate\Validation\Rule;
@@ -68,11 +72,9 @@ class ApiController extends Controller
             ]);
         }
 
-
-    // Login Api(POST)
-
+      // Login Api(POST)
       public function login(Request $request)
-    {
+          {
         // Data validation
         $request->validate([
             "email" => "required|email",
@@ -87,13 +89,18 @@ class ApiController extends Controller
             $user = Auth::user();
 
             // Create a new token for the user
-            $token = $user->createToken("myToken")->accessToken;
+            $accessToken = $user->createToken('myToken')->plainTextToken;
+
+            //To send email after user login in successfully
+            Mail::to($user->email)->send(new LoginMail($user));
 
             return response()->json([
                 "status" => true,
                 "message" => "Login successful",
-                "access_token" => $token
+                'access_token' => $accessToken,
             ]);
+
+
         }
 
         return response()->json([
@@ -102,6 +109,46 @@ class ApiController extends Controller
         ]);
     }
 
+
+    //Profile Api(POST);
+
+    public function payment(Request $request)
+    {
+             // Data Validation
+            $request->validate([
+                "user_id" => "required",
+                "user_name" => "required",
+                "user_email" => "required|email",
+                "amount" => "required",
+                "payment_type" => "required",
+                "payment_status" => "required",
+                "payment_method" => "required",
+                "currency" => "required",
+            ]);
+
+           $payment = Payment::create([
+                "user_id" => $request->user_id,
+                "user_name" => $request->user_name,
+                "user_email" => $request->user_email,
+                "amount" => $request->amount,
+                "payment_type" => $request->payment_type,
+                "payment_status" => $request->payment_status,
+                "payment_method" => $request->payment_method,
+                "currency" => $request->currency,
+            ]);
+
+           if ($request->payment_type == 1) {
+               Mail::to($payment->user_email)->send(new MeduimPaymentMail($payment));
+           } elseif ($request->payment_type == 2) {
+               Mail::to($payment->user_email)->send(new PremuimPaymentMail($payment));
+           }
+
+        return response()->json([
+            "status" => true,
+            "message" => "Payment Made Successfully"
+        ]);
+
+    }
 
     // Profile API (GET)
     public function profile()
@@ -113,22 +160,22 @@ class ApiController extends Controller
             'message' => 'Profile data',
             'data' => $user,
         ]);
+
+
     }
     // Logout API (GET)
-    public function logout(){
+    public function logout(Request $request)
+    {
+        $user = $request->user(); 
 
-        // Revoke all tokens...
+        // Revoke all tokens associated with the user
         $user->tokens()->delete();
 
-        // Revoke the token that was used to authenticate the current request...
-        $request->user()->currentAccessToken()->delete();
- 
-        // Revoke a specific token...
-        $user->tokens()->where('id', $tokenId)->delete();
-
+        // Return a JSON response indicating successful logout
         return response()->json([
             "status" => true,
             "message" => "User logged out"
         ]);
     }
+
 }

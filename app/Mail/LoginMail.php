@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class RegistrationMail extends Mailable
+class LoginMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -37,7 +37,7 @@ class RegistrationMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('AfricTv Registration')
-                    ->view('emails.Registration');
+        return $this->subject('AfricTv Login')
+                    ->view('emails.Login');
     }
 }

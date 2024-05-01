@@ -2,32 +2,32 @@
 
 namespace App\Mail;
 
-use App\Models\User;
+use App\Models\Payment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class RegistrationMail extends Mailable
+class MeduimPaymentMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
-     * The user instance.
+     * The payment instance.
      *
      * @var \App\Models\User
      */
-    public $user;
+    public $payment;
 
     /**
      * Create a new message instance.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Payment  $payment
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(Payment $payment)
     {
-        $this->user = $user;
+        $this->payment = $payment;
     }
    
     /**
@@ -37,7 +37,7 @@ class RegistrationMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('AfricTv Registration')
-                    ->view('emails.Registration');
+        return $this->subject('Thank You for Upgrading to Our Medium Plan!')
+                    ->view('emails.meduim');
     }
 }
