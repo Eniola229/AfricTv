@@ -23,7 +23,7 @@
     <p style="color: #666; text-align: justify;">We're continuously striving to improve our services and provide you with the best possible experience. If you have any questions, feedback, or suggestions, please don't hesitate to reach out to our dedicated support team. We're here to assist you every step of the way.</p>
     <p style="color: #666; text-align: justify;">You can cencel this plan anytime!!!.</p>
     <p style="color: #666; text-align: justify;">Best regards,</p>
-    <p style="color: green; text-align: justify;">AfricTv Team
+    <p style="color: green; text-align: justify;">AfricGEM Team
 </div>
 
 </body>

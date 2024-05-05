@@ -25,7 +25,7 @@
     <p style="color: #666; text-align: justify;">Once again, thank you for choosing our Premium Plan. We look forward to serving you and ensuring that your experience with us exceeds your expectations.</p>
     <p style="color: #666; text-align: justify;">You can cencel this plan anytime!!!.</p>
     <p style="color: #666; text-align: justify;">Best regards,</p>
-    <p style="color: green; text-align: justify;">AfricTv Team
+    <p style="color: green; text-align: justify;">AfricGEM Team
 </div>
 
 </body>

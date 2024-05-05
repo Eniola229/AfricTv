@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to AfricTv</title>
+    <title>Welcome to AfricGEM</title>
 </head>
 <body>
     <h2>Dear {{ $user->name }},</h2>

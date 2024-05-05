@@ -72,6 +72,41 @@ class ApiController extends Controller
             ]);
         }
 
+        //Update Profile (PUT)
+        public function updateprofile()
+        {
+            // code...
+             $request->validate([
+                    "avatar" => "image|max:2048",
+                    "name" => "required",
+                    "email" => "required|email|unique:users",
+                    "phone_number" => "required",
+                    "password" => "required|confirmed"
+                ]);
+
+            $user = User::find($id)
+            if ($user) {
+                // code...
+                "avatar" => $avatarPath,
+                "name" => $request->name,
+                "email" => $request->email,
+                "phone_number" => $request->phone_number,
+                "password" => Hash::make($request->password),
+                $user = update(),
+                return response()->json([
+                    "status" => true,
+                    "message" => "Profile Updated Successfully"
+                ]);
+
+            } else {
+                return response()->json([
+                    "status" => true,
+                    "message" => "User Not Found"
+                ]);
+            }
+                
+        }
+
       // Login Api(POST)
       public function login(Request $request)
           {
@@ -109,12 +144,24 @@ class ApiController extends Controller
         ]);
     }
 
+    // Define the mapping logic directly in the controller
+    private function mapPaymentTypeToSubscriptionStatus($paymentType) {
+    // Example mapping logic, replace this with your actual logic
+        switch ($paymentType)
+    {
+            case '1':
+                return '1';
+            case '2':
+                return '2';
+            default:
+                return '0';
+    }
+    }
 
     //Profile Api(POST);
-
     public function payment(Request $request)
     {
-             // Data Validation
+            // Data Validation
             $request->validate([
                 "user_id" => "required",
                 "user_name" => "required",
@@ -126,7 +173,8 @@ class ApiController extends Controller
                 "currency" => "required",
             ]);
 
-           $payment = Payment::create([
+           // Storing payment data
+            $payment = Payment::create([
                 "user_id" => $request->user_id,
                 "user_name" => $request->user_name,
                 "user_email" => $request->user_email,
@@ -135,34 +183,50 @@ class ApiController extends Controller
                 "payment_status" => $request->payment_status,
                 "payment_method" => $request->payment_method,
                 "currency" => $request->currency,
+            ]);   
+
+            // Updating user subscription status based on payment type
+           $user = User::find($request->user_id);
+
+            if ($user) {
+                // Mapping payment type to subscription status
+                $subscriptionStatus = $this->mapPaymentTypeToSubscriptionStatus($request->payment_type);
+                
+                // Update subscription status
+                $user->subscribtion_status = $subscriptionStatus;
+                $user->save();
+            } else {
+                return response()->json([
+                    "status" => false,
+                    "message" => "User was not found"
+                ]);
+            }
+
+            if ($request->payment_type == 1) {
+                Mail::to($payment->user_email)->send(new MeduimPaymentMail($payment));
+            } elseif ($request->payment_type == 2) {
+               Mail::to($payment->user_email)->send(new PremuimPaymentMail($payment));
+            }
+
+            return response()->json([
+                "status" => true,
+                "message" => "Payment Made Successfully"
             ]);
 
-           if ($request->payment_type == 1) {
-               Mail::to($payment->user_email)->send(new MeduimPaymentMail($payment));
-           } elseif ($request->payment_type == 2) {
-               Mail::to($payment->user_email)->send(new PremuimPaymentMail($payment));
-           }
-
-        return response()->json([
-            "status" => true,
-            "message" => "Payment Made Successfully"
-        ]);
-
-    }
+        }
 
     // Profile API (GET)
     public function profile()
     {
         $user = auth()->user();
-
         return response()->json([
             'status' => true,
             'message' => 'Profile data',
             'data' => $user,
-        ]);
+    ]);
+  }
 
 
-    }
     // Logout API (GET)
     public function logout(Request $request)
     {
