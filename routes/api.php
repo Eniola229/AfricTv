@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Api\V1\NewPasswordController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -11,6 +12,8 @@ use App\Http\Controllers\Api\V1\ApiController;
 //Open Route
 Route::post('register', [ApiController::class, 'register']);
 Route::post("login", [ApiController::class, "login"]);
+Route::post('forgot_password', [NewPasswordController::class, 'forgotPassword']);
+Route::post('reset_password', [NewPasswordController::class, 'reset']);
 
 //Protected Route 
 Route::group([
