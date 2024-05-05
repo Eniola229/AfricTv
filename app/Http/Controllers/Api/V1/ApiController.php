@@ -12,6 +12,7 @@ use App\Mail\RegistrationMail;
 use App\Mail\LoginMail;
 use App\Mail\MeduimPaymentMail;
 use App\Mail\PremuimPaymentMail;
+use App\Mail\ProfileUpdateMail;
 use Illuminate\Support\Facades\Mail;
 use MailerSend\MailerSend;
 use Illuminate\Validation\Rule;
@@ -46,10 +47,10 @@ class ApiController extends Controller
                         });
 
                         // Store the resized avatar
-                        $avatarPath = $image->stream()->store('avatars', 'public');
+                         $avatarPath = $request->file('avatar')->store('avatars');
                     } else {
                         // Avatar is within 2MB size limit, store it as usual
-                        $avatarPath = $avatarFile->store('avatars', 'public');
+                        $avatarPath = $request->file('avatar')->store('avatars');
                     }
              } else {
                 $avatarPath = null;
@@ -73,39 +74,56 @@ class ApiController extends Controller
         }
 
         //Update Profile (PUT)
-        public function updateprofile()
-        {
-            // code...
-             $request->validate([
-                    "avatar" => "image|max:2048",
-                    "name" => "required",
-                    "email" => "required|email|unique:users",
-                    "phone_number" => "required",
-                    "password" => "required|confirmed"
-                ]);
+        public function updateprofile(Request $request, $id)
+        {   
 
-            $user = User::find($id)
+            //Get the id of the Authenticated User
+            $userId = Auth::id();
+            $request->validate([
+                "avatar" => "image|max:2048",
+                "name" => "required",
+                "email" => "required|email|unique:users,email," . $id,
+                "phone_number" => "required",
+                "password" => "required|confirmed"
+            ]);
+
+            $user = User::find($userId);
+
             if ($user) {
-                // code...
-                "avatar" => $avatarPath,
-                "name" => $request->name,
-                "email" => $request->email,
-                "phone_number" => $request->phone_number,
-                "password" => Hash::make($request->password),
-                $user = update(),
+                // Update user properties
+                $user->name = $request->name;
+                $user->email = $request->email;
+                $user->phone_number = $request->phone_number;
+                $user->password = Hash::make($request->password);
+
+                Handle avatar upload if provided
+                if ($request->hasFile('avatar')) {
+                    $avatarPath = $request->file('avatar')->store('avatars');
+                    $user->avatar = $avatarPath;
+                } else {
+                    return response()->json([
+                        "status" => false,
+                        "message" => "No Profile Picture Was Uploaded"
+                    ]);
+                }
+
+                // Save the updated user
+                $user->save();
+                //Send mail if it was successful
+                Mail::to($user->email)->send(new ProfileUpdateMail($user));
+
                 return response()->json([
                     "status" => true,
                     "message" => "Profile Updated Successfully"
                 ]);
-
             } else {
                 return response()->json([
-                    "status" => true,
+                    "status" => false,
                     "message" => "User Not Found"
                 ]);
             }
-                
         }
+
 
       // Login Api(POST)
       public function login(Request $request)

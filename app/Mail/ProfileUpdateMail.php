@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class LoginMail extends Mailable
+class ProfileUpdateMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -37,7 +37,7 @@ class LoginMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('AfricGEM Login')
-                    ->view('emails.Login');
+        return $this->subject('AfricGEM Profile Update ALert')
+                    ->view('emails.ProfileUpdate');
     }
 }

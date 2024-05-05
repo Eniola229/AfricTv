@@ -37,7 +37,7 @@ class RegistrationMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('AfricTv Registration')
+        return $this->subject('AfricGEM Registration')
                     ->view('emails.Registration');
     }
 }

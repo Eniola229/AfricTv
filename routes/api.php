@@ -19,5 +19,5 @@ Route::group([
     Route::post("payment", [ApiController::class, "payment"]);
     Route::get("profile", [ApiController::class, "profile"]);
     Route::get("logout", [ApiController::class, "logout"]);
-    Route::put("{token}/{id}/updateprofile", [ApiController::class, "updateprofile"]);
+    Route::put("updateprofile/{id}", [ApiController::class, "updateprofile"]);
 });
