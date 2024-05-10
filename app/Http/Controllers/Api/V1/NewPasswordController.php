@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\Rules\Password as RulesPassword;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
+use App\Models\User;
+
 
 class NewPasswordController extends Controller
 {
@@ -24,18 +28,25 @@ class NewPasswordController extends Controller
         );
 
         if ($status === Password::RESET_LINK_SENT) {
+            // If the reset link was sent successfully
+            $user = User::where('email', $request->email)->first();
+            if ($user) {
+                // Send reset password email to the user
+                Mail::to($user->email)->send(new ResetPasswordMail($user));
+            }
+
             return response()->json([
                 'status' => true,
                 'message' => 'Password Reset Link Sent to Email'
             ]);
         } else {
+            // If an error occurred
             return response()->json([
                 'status' => false,
                 'message' => $status,
             ]);
         }
     }
-
 
     public function reset(Request $request)
     {

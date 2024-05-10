@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Mail\ResetPasswordMail;
+// use Illuminate\Support\Facades\Mail;
+// use App\Mail\ResetPasswordMail;
 
 
 class User extends Authenticatable
@@ -38,13 +39,13 @@ class User extends Authenticatable
     ];
 
     //For password reset link
-     public function sendPasswordResetNotification($token)
-    {
+    //  public function sendPasswordResetNotification($token)
+    // {
 
-        $url = 'https://africgem/reset-password?token=' . $token;
+    //     $url = 'https://africgem/reset-password?token=' . $token;
 
-         Mail::to($user->email)->send(new ResetPasswordMail($user));
-    }
+    //      Mail::to($user->email)->send(new ResetPasswordMail($user));
+    // }
 
 
     /**

@@ -96,7 +96,7 @@ class ApiController extends Controller
                 $user->phone_number = $request->phone_number;
                 $user->password = Hash::make($request->password);
 
-                Handle avatar upload if provided
+                //Handle avatar upload if provided
                 if ($request->hasFile('avatar')) {
                     $avatarPath = $request->file('avatar')->store('avatars');
                     $user->avatar = $avatarPath;
