@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Controllers\Api\V1\NewPasswordController;
 use App\Http\Controllers\Api\V1\UserCardDetails;
-use App\Http\Controllers\Api\V1\Feedback;
+use App\Http\Controllers\Api\V1\FeedbackController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -16,7 +16,7 @@ Route::post('register', [ApiController::class, 'register']);
 Route::post("login", [ApiController::class, "login"]);
 Route::post('forgot_password', [NewPasswordController::class, 'forgotPassword']);
 Route::post('reset_password', [NewPasswordController::class, 'resetPassword']);
-Route::post('feedback', [Feedback::class, 'feedback']);
+Route::post('feedback', [FeedbackController::class, 'feedback']);
 
 
 
