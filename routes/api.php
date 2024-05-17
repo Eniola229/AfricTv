@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Controllers\Api\V1\NewPasswordController;
 use App\Http\Controllers\Api\V1\UserCardDetails;
 use App\Http\Controllers\Api\V1\FeedbackController;
+use App\Http\Controllers\Api\V1\AdsPayment;
+use App\Http\Controllers\Api\V1\AdsPaymentController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -29,4 +31,5 @@ Route::group([
     Route::get("logout", [ApiController::class, "logout"]);
     Route::put("updateprofile/{id}", [ApiController::class, "updateprofile"]);
     Route::post("carddetails", [UserCardDetails::class, "carddetails"]);
+    Route::post("adsPayment", [AdsPaymentController::class, "adsPayment"]);
 });

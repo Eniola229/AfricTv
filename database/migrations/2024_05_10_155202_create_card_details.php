@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('card_number');
             $table->string('card_cvc_number');
             $table->string('expiration_date');
+            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

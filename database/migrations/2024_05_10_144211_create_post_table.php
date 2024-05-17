@@ -11,8 +11,25 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('post', function (Blueprint $table) {
+        Schema::create('posts', function (Blueprint $table) {
             $table->id();
+            $table->string('user_id');
+            $table->string('user_name');
+            $table->string('unique_id');
+            $table->string('user_email');
+            $table->string('post_title');
+            $table->string('post_img_path');
+            $table->string('post_vid_path');
+            $table->string('post_pdf_path');
+            $table->string('post_song_path');
+            $table->string('category');
+            $table->string('link');
+            $table->string('post_intro');
+            $table->string('post_body');
+            $table->string('post_ending');
+            $table->string('post_views');
+            $table->date('date');
+            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->datetime('start_date');
             $table->string('end_date');
             $table->string('status');
+            $table->foreign('id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }

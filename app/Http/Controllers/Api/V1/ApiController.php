@@ -18,7 +18,7 @@ use MailerSend\MailerSend;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
 
-
+   
 class ApiController extends Controller
 {
         // Register Api(POST)
@@ -56,10 +56,19 @@ class ApiController extends Controller
                 $avatarPath = null;
              }
 
+             //Generating unique_id
+            // Extract the first word from the name
+            $firstWord = strtok($request->name, ' ');
+            // Generate a random four-digit number
+            $randomNumber = rand(1000, 9999);
+
+            $unique_id = '@' .$firstWord . $randomNumber;
+
             // Create User
             $user = User::create([
                 "avatar" => $avatarPath,
                 "name" => $request->name,
+                "unique_id" => $unique_id,
                 "email" => $request->email,
                 "phone_number" => $request->phone_number,
                 "password" => Hash::make($request->password)
@@ -151,6 +160,7 @@ class ApiController extends Controller
                 "status" => true,
                 "message" => "Login successful",
                 'access_token' => $accessToken,
+                 "user" => $user
             ]);
 
 

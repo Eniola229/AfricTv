@@ -11,17 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
             $table->string('user_email');
             $table->string('user_name');
-            $table->string('amount');
-            $table->string('payment_type');
-            $table->string('payment_status');
-            $table->string('payment_method');
-            $table->string('currency');
-            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('unique_id');
+            $table->string('comments');
+            $table->string('comments_vid_path');
+            $table->string('comments_img_path');
+            $table->string('comments_link');
+            $table->date('date');
+            $table->foreign('id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('comments');
     }
 };
