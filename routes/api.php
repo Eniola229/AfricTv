@@ -20,6 +20,7 @@ Route::post("login", [ApiController::class, "login"]);
 Route::post('forgot_password', [NewPasswordController::class, 'forgotPassword']);
 Route::post('reset_password', [NewPasswordController::class, 'resetPassword']);
 Route::post('feedback', [FeedbackController::class, 'feedback']);
+Route::get('readpost', [PostController::class, 'readpost']);
 
 
 
@@ -35,4 +36,5 @@ Route::group([
     Route::post("adsPayment", [AdsPaymentController::class, "adsPayment"]);
     Route::post("posts", [PostController::class, "posts"]);
     Route::put("updateposts/{id}", [PostController::class, "updateposts"]);
+    Route::delete("deleteposts/{id}", [PostController::class, "deleteposts"]);
 });

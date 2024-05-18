@@ -97,29 +97,126 @@ class PostController extends Controller
             "message" => "Post Uploaded Successfully"
         ]);
     }
-    public function updateposts(Request $request){
+   public function updateposts(Request $request)
+{
+    $request->validate([
+        "user_id" => "required",
+        "post_title" => "nullable",
+        "post_img_path" => "nullable|image|max:2048",
+        'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
+        "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
+        "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
+        "category" => "required",
+        "link" => "nullable",
+        "post_intro" => "nullable",
+        "post_body" => "required",
+        "post_ending" => "nullable",
+        "post_views" => "nullable",
+        "date" => "nullable|date",
+    ]);
 
-        $postId = Post::id();
+            $postId = $request->input('post_id'); 
+            $post = Post::find($postId);
+
+            if ($post) {
+                // Update post properties
+                $post->post_title = $request->post_title;
+                $post->category = $request->category;
+                $post->link = $request->link;
+                $post->post_intro = $request->post_intro;
+                $post->post_body = $request->post_body;
+                $post->post_ending = $request->post_ending;
+
+                // Handle image upload
+                if ($request->hasFile('post_img_path')) {
+                    $imageFile = $request->file('post_img_path');
+                    $imageSize = $imageFile->getSize();
+
+                    if ($imageSize > 2048000) { // 2MB in bytes
+                        $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
+
+                        $imagePath = 'public/images/' . $imageFile->hashName();
+                        $image->save(storage_path('app/' . $imagePath));
+                    } else {
+                        $imagePath = $imageFile->store('public/images');
+                    }
+                    $post->post_img_path = $imagePath;
+                }
+
+                // Handle video upload
+                if ($request->hasFile('post_vid_path')) {
+                    $videoPath = $request->file('post_vid_path')->store('public/videos');
+                    $post->post_vid_path = $videoPath;
+                }
+
+                // Handle document upload
+                if ($request->hasFile('post_pdf_path')) {
+                    $docPath = $request->file('post_pdf_path')->store('public/documents');
+                    $post->post_pdf_path = $docPath;
+                }
+
+                // Handle song upload
+                if ($request->hasFile('post_song_path')) {
+                    $songPath = $request->file('post_song_path')->store('public/songs');
+                    $post->post_song_path = $songPath;
+                }
+
+                // Save the updated post
+                $post->save();
+
+                // // Send mail if it was successful
+                // Mail::to($request->user_email)->send(new ProfileUpdateMail($post));
+
+                return response()->json([
+                    "status" => true,
+                    "message" => "Post Updated Successfully"
+                ]);
+            } else {
+                return response()->json([
+                    "status" => false,
+                    "message" => "Post Not Found"
+                ]);
+            }
+        }
+
+       public function deleteposts(Request $request)
+        {
             $request->validate([
-            "user_id" => "required",
-            "user_name" => "required",
-            "unique_id" => "required",
-            "user_email" => "required|email",
-            "post_title" => "nullable",
-            "post_img_path" => "nullable|image|max:2048",
-            'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
-            "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
-            "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
-            "category" => "required",
-            "link" => "nullable",
-            "post_intro" => "nullable",
-            "post_body" => "required",
-            "post_ending" => "nullable",
-            "post_views" => "nullable",
-            "date" => "nullable|date",
+                'post_id' => 'required|integer'
             ]);
 
-            $posts = Post::find($postId);
+            $postId = $request->input('post_id');
+            $post = Post::find($postId);
 
-    }
+            if ($post) {
+                $post->delete();
+
+                return response()->json([
+                    "status" => true,
+                    "message" => "Post deleted successfully"
+                ]);
+            } else {
+                return response()->json([
+                    "status" => false,
+                    "message" => "Post not found"
+                ]);
+            }
+        }
+
+        public function readpost()
+        {
+            $posts = Post::all(); // Retrieve all posts from the database
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Post data',
+                'data' => $posts,
+            ]);
+        }
+
+
+
 }

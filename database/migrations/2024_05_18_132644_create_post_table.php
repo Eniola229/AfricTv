@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->string('user_id');
+       Schema::create('posts', function (Blueprint $table) {
+            $table->bigIncrements('id'); // Primary key
+            $table->unsignedBigInteger('user_id'); // Foreign key referencing users table
             $table->string('user_name');
             $table->string('unique_id');
             $table->string('user_email');
@@ -23,14 +23,17 @@ return new class extends Migration
             $table->string('post_pdf_path');
             $table->string('post_song_path');
             $table->string('category');
-            $table->string('link');
-            $table->string('post_intro');
+            $table->string('link')->nullable();
+            $table->string('post_intro')->nullable();
             $table->string('post_body');
-            $table->string('post_ending');
-            $table->string('post_views');
-            $table->date('date');
-            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
+            $table->string('post_ending')->nullable();
+            $table->integer('post_views')->default(0); // Assuming it's an integer type
+            $table->date('date')->nullable();
             $table->timestamps();
+
+            // Define foreign key relationship with users table
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+  
         });
     }
 

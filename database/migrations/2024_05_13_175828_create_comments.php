@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,18 +11,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->id();
+            $table->id(); // Primary key
+            $table->unsignedBigInteger('post_id'); // Foreign key column
             $table->string('user_id');
             $table->string('user_email');
             $table->string('user_name');
             $table->string('unique_id');
-            $table->string('comments');
-            $table->string('comments_vid_path');
-            $table->string('comments_img_path');
-            $table->string('comments_link');
+            $table->text('comments');
+            $table->string('comments_vid_path')->nullable();
+            $table->string('comments_img_path')->nullable();
+            $table->string('comments_link')->nullable();
             $table->date('date');
-            $table->foreign('id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
+
+            // Foreign key definition
+            // $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
         });
     }
 
@@ -35,3 +37,4 @@ return new class extends Migration
         Schema::dropIfExists('comments');
     }
 };
+

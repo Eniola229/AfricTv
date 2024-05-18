@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('unique_id');
             $table->string('click');
             $table->date('date');
-            $table->foreign('id')->references('id')->on('posts')->onDelete('cascade');
+            // $table->foreign('id')->references('id')->on('posts')->onDelete('cascade');
             $table->timestamps();
         });
     }
