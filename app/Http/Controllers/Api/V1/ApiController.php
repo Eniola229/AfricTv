@@ -18,7 +18,7 @@ use MailerSend\MailerSend;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
 
-   
+    
 class ApiController extends Controller
 {
         // Register Api(POST)
@@ -47,10 +47,10 @@ class ApiController extends Controller
                         });
 
                         // Store the resized avatar
-                         $avatarPath = $request->file('avatar')->store('avatars');
+                         $avatarPath = $request->file('avatar')->store('public/avatars');
                     } else {
                         // Avatar is within 2MB size limit, store it as usual
-                        $avatarPath = $request->file('avatar')->store('avatars');
+                        $avatarPath = $request->file('avatar')->store('public/avatars');
                     }
              } else {
                 $avatarPath = null;

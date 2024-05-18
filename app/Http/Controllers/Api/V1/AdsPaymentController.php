@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\AdsPayment;
 
 class AdsPaymentController extends Controller
-{
+{  
     public function adsPayment(Request $request)
     {
         // Data Validation

@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\UserCardDetails;
 use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\AdsPayment;
 use App\Http\Controllers\Api\V1\AdsPaymentController;
+use App\Http\Controllers\Api\V1\PostController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -32,4 +33,6 @@ Route::group([
     Route::put("updateprofile/{id}", [ApiController::class, "updateprofile"]);
     Route::post("carddetails", [UserCardDetails::class, "carddetails"]);
     Route::post("adsPayment", [AdsPaymentController::class, "adsPayment"]);
+    Route::post("posts", [PostController::class, "posts"]);
+    Route::put("updateposts/{id}", [PostController::class, "updateposts"]);
 });
