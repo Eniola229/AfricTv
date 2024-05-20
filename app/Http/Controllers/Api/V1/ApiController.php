@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Mail;
 use MailerSend\MailerSend;
 use Illuminate\Validation\Rule;
 use Intervention\Image\Facades\Image;
-
+use App\Models\Post;
+use App\Models\Feedposts;
     
 class ApiController extends Controller
 {
@@ -162,8 +163,6 @@ class ApiController extends Controller
                 'access_token' => $accessToken,
                  "user" => $user
             ]);
-
-
         }
 
         return response()->json([
@@ -243,14 +242,25 @@ class ApiController extends Controller
 
         }
 
+
+         public function posts()
+        {
+            return $this->hasMany(Post::class);
+        }
+
     // Profile API (GET)
     public function profile()
     {
         $user = auth()->user();
+        $userPosts = Post::where('user_id', $user->id)->get();
+        $feedPosts = Feedposts::where('user_id', $user->id)->get();
         return response()->json([
             'status' => true,
             'message' => 'Profile data',
-            'data' => $user,
+            'user' => $user,
+            'blogposts' => $userPosts,
+            'feedposts' => $feedPosts,
+
     ]);
   }
 

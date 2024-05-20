@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\AdsPayment;
 use App\Http\Controllers\Api\V1\AdsPaymentController;
 use App\Http\Controllers\Api\V1\PostController;
+use App\Http\Controllers\Api\V1\FeedPostController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -21,6 +22,7 @@ Route::post('forgot_password', [NewPasswordController::class, 'forgotPassword'])
 Route::post('reset_password', [NewPasswordController::class, 'resetPassword']);
 Route::post('feedback', [FeedbackController::class, 'feedback']);
 Route::get('readpost', [PostController::class, 'readpost']);
+Route::get('readfeedpost', [FeedPostController::class, 'readfeedpost']);
 
 
 
@@ -37,4 +39,8 @@ Route::group([
     Route::post("posts", [PostController::class, "posts"]);
     Route::put("updateposts/{id}", [PostController::class, "updateposts"]);
     Route::delete("deleteposts/{id}", [PostController::class, "deleteposts"]);
+    Route::post("feedposts", [FeedPostController::class, "feedposts"]);
+    Route::put("updatefeedposts/{id}", [FeedPostController::class, "updatefeedposts"]);
+    Route::delete("deletefeedposts/{id}", [FeedPostController::class, "deletefeedposts"]);
+
 });

@@ -15,24 +15,28 @@ return [
     |
     */
 
-    'paths' => ['*', 'sanctum/csrf-cookie'],
+    // Allowing CORS for all paths
+    'paths' => ['*'],
 
-    'allowed_methods' => ['*'],
+    // Allowing specific HTTP methods: GET, POST, PUT (Update), DELETE
+    'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
 
-    'allowed_origins' => [
-        'http://127.0.0.1:8000',
-        'http://localhost:5173/',
-        'file:///C:/Users/Admin/Desktop/index.html'
-],
+    // Allowing all origins
+    'allowed_origins' => ['*'],
 
+    // No specific patterns for allowed origins
     'allowed_origins_patterns' => [],
 
+    // Allowing all headers
     'allowed_headers' => ['*'],
 
+    // No specific headers to expose
     'exposed_headers' => [],
 
+    // No caching for preflight responses
     'max_age' => 0,
 
+    // Allowing credentials such as cookies and authorization headers
     'supports_credentials' => true,
 
 ];

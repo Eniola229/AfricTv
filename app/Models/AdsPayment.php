@@ -19,5 +19,6 @@ class AdsPayment extends Model
         "currency",
         "ads_type",
         "duration",
+        "clicks",
     ];
 }
