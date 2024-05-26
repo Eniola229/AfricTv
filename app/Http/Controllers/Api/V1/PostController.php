@@ -31,25 +31,31 @@ class PostController extends Controller
             "date" => "nullable|date",
         ]);
 
+   
         // Handle image upload and resizing
+        $imagePaths = [];
+        $imagePath = ""; // Initialize $imagePath outside the loop
         if ($request->hasFile('post_img_path')) {
-            $imageFile = $request->file('post_img_path');
-            $imageSize = $imageFile->getSize();
+            foreach ($request->file('post_img_path') as $imageFile) {
+                $imageSize = $imageFile->getSize();
 
-            if ($imageSize > 2048000) { // 2MB in bytes
-                $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
+                if ($imageSize > 2048000) { // 2MB in bytes
+                    $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
 
-                $imagePath = 'public/images/' . $imageFile->hashName();
-                $image->save(storage_path('app/' . $imagePath));
-            } else {
-                $imagePath = $imageFile->store('public/images');
+                    $imagePath = 'public/images/' . $imageFile->hashName();
+                    $image->save(storage_path('app/' . $imagePath));
+                } else {
+                    $imagePath = $imageFile->store('public/images');
+                }
+                $imagePaths[] = $imagePath;
             }
         } else {
-            $imagePath = "no file uploaded";
+            $imagePaths[] = "no image uploaded";
         }
+
 
         // Handle video upload
         if ($request->hasFile('post_vid_path')) {

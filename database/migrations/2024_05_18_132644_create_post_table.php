@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('user_name');
             $table->string('unique_id');
             $table->string('user_email');
-            $table->string('post_title');
+            $table->string('post_title'); 
             $table->string('post_img_path');
             $table->string('post_vid_path');
             $table->string('post_pdf_path');

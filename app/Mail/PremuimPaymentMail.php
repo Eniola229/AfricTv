@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class PremuimPaymentMail extends Mailable
-{
+{ 
     use Queueable, SerializesModels;
 
     /**

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\AdsPayment;
 use App\Http\Controllers\Api\V1\AdsPaymentController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\FeedPostController;
+use App\Http\Controllers\Api\V1\SubscribtionController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -32,7 +33,7 @@ Route::group([
 ], function(){
     Route::post("payment", [ApiController::class, "payment"]);
     Route::get("profile", [ApiController::class, "profile"]);
-    Route::get("logout", [ApiController::class, "logout"]);
+    Route::post("logout", [ApiController::class, "logout"]);
     Route::put("updateprofile/{id}", [ApiController::class, "updateprofile"]);
     Route::post("carddetails", [UserCardDetails::class, "carddetails"]);
     Route::post("adsPayment", [AdsPaymentController::class, "adsPayment"]);
@@ -40,6 +41,7 @@ Route::group([
     Route::put("updateposts/{id}", [PostController::class, "updateposts"]);
     Route::delete("deleteposts/{id}", [PostController::class, "deleteposts"]);
     Route::post("feedposts", [FeedPostController::class, "feedposts"]);
+    Route::post("subscribtion", [SubscribtionController::class, "subscribtion"]);
     Route::put("updatefeedposts/{id}", [FeedPostController::class, "updatefeedposts"]);
     Route::delete("deletefeedposts/{id}", [FeedPostController::class, "deletefeedposts"]);
 

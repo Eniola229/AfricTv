@@ -65,6 +65,9 @@ class ApiController extends Controller
 
             $unique_id = '@' .$firstWord . $randomNumber;
 
+            //Auto giving the user 0 subscribers
+            $subscribers_number = "0";
+
             // Create User
             $user = User::create([
                 "avatar" => $avatarPath,
@@ -72,6 +75,7 @@ class ApiController extends Controller
                 "unique_id" => $unique_id,
                 "email" => $request->email,
                 "phone_number" => $request->phone_number,
+                "subscribers_number" => $subscribers_number,
                 "password" => Hash::make($request->password)
             ]);
 
