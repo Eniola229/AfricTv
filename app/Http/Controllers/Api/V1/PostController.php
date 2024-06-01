@@ -17,16 +17,17 @@ class PostController extends Controller
             "user_name" => "required",
             "unique_id" => "required",
             "user_email" => "required|email",
-            "post_title" => "nullable",
-            "post_img_path" => "nullable|image|max:2048",
+            "post_title" => "required",
+            'post_img_path' => 'array',
+            'post_img_path.*' => 'nullable|image|max:2048',
             'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
             "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
             "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
             "category" => "required",
             "link" => "nullable",
-            "post_intro" => "nullable",
+            "post_intro" => "required",
             "post_body" => "required",
-            "post_ending" => "nullable",
+            "post_ending" => "required",
             "post_views" => "nullable",
             "date" => "nullable|date",
         ]);
@@ -34,7 +35,6 @@ class PostController extends Controller
    
         // Handle image upload and resizing
         $imagePaths = [];
-        $imagePath = ""; // Initialize $imagePath outside the loop
         if ($request->hasFile('post_img_path')) {
             foreach ($request->file('post_img_path') as $imageFile) {
                 $imageSize = $imageFile->getSize();
@@ -108,7 +108,8 @@ class PostController extends Controller
     $request->validate([
         "user_id" => "required",
         "post_title" => "nullable",
-        "post_img_path" => "nullable|image|max:2048",
+        'post_img_path' => 'array',
+        'post_img_path.*' => 'nullable|image|max:2048',
         'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
         "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
         "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
@@ -134,24 +135,27 @@ class PostController extends Controller
                 $post->post_ending = $request->post_ending;
 
                 // Handle image upload
+                 $imagePaths = [];
                 if ($request->hasFile('post_img_path')) {
-                    $imageFile = $request->file('post_img_path');
-                    $imageSize = $imageFile->getSize();
+                    foreach ($request->file('post_img_path') as $imageFile) {
+                        $imageSize = $imageFile->getSize();
 
-                    if ($imageSize > 2048000) { // 2MB in bytes
-                        $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
-                            $constraint->aspectRatio();
-                            $constraint->upsize();
-                        });
+                        if ($imageSize > 2048000) { // 2MB in bytes
+                            $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize();
+                            });
 
-                        $imagePath = 'public/images/' . $imageFile->hashName();
-                        $image->save(storage_path('app/' . $imagePath));
-                    } else {
-                        $imagePath = $imageFile->store('public/images');
+                            $imagePath = 'public/images/' . $imageFile->hashName();
+                            $image->save(storage_path('app/' . $imagePath));
+                        } else {
+                            $imagePath = $imageFile->store('public/images');
+                        }
+                        $imagePaths[] = $imagePath;
                     }
-                    $post->post_img_path = $imagePath;
+                } else {
+                    $imagePaths[] = "no image uploaded";
                 }
-
                 // Handle video upload
                 if ($request->hasFile('post_vid_path')) {
                     $videoPath = $request->file('post_vid_path')->store('public/videos');

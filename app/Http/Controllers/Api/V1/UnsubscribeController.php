@@ -11,26 +11,24 @@ use App\Models\User;
 use App\Models\Subscribtion;
 use App\Mail\SubscribtionMail;
  
-class SubscribtionController extends Controller
+class UnsubscribeController extends Controller
 {
-        public function subscribtion(Request $request)
+        public function unsubscribe(Request $request)
         {
             // Validate the request
             $request->validate([
                 "user_id" => "required",
                 "user_email" => "required",
                 "subscriber_id" => "required",
-                "subscriber_unique_id" => "required",
-                "subscriber_email" => "required|unique:subscribtions",
+                "subscriber_email" => "required",
             ]);
 
-            $unsubscribe = "0";
+             $unsubscribe = "1";
             // Create a new subscription record
-            $subscribtion = Subscribtion::create([
+            $unsubscribe = Subscribtion::create([
                 "user_id" => $request->user_id,
                 "user_email" => $request->user_email,
                 "subscriber_id" => $request->subscriber_id,
-                "subscriber_unique_id" => $request->subscriber_unique_id,
                 "subscriber_email" => $request->subscriber_email,
                 "unsubscribe" => $unsubscribe,
             ]);
@@ -40,35 +38,23 @@ class SubscribtionController extends Controller
 
             // If the user exists, increment the subscribers_number
             if ($user) {
-                $user->subscribers_number += 1;
+                $user->subscribers_number -= 1;
                 $user->save();
             } else {
                 return response()->json([
                     "status" => false,
                     "message" => "Unknown Error"
                 ]);
-            } 
+            }
 
             // Send an email to the user
-            Mail::to($subscribtion->user_email)->send(new SubscribtionMail($subscribtion));
+            // Mail::to($subscribtion->user_email)->send(new SubscribtionMail($subscribtion));
 
             // Return a JSON response
             return response()->json([
                 "status" => true,
-                "message" => "Subscribed Successfully"
+                "message" => "Unsubscribed Successfully"
             ]);
         }
-
-        public function viewsubscribtion()
-        {
-            $user = auth()->user();
-            $subscribtion = Subscribtion::where('user_id', $user->id)->get();
-            return response()->json([
-                'status' => true,
-                'message' => 'Subscription data',
-                'Subscription' => $subscribtion,
-
-        ]);
-      }
 
 }

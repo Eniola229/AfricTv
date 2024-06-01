@@ -11,9 +11,10 @@ use App\Http\Controllers\Api\V1\AdsPaymentController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\FeedPostController;
 use App\Http\Controllers\Api\V1\SubscribtionController;
+use App\Http\Controllers\Api\V1\UnsubscribeController;
 
 // Route::get('/user', function (Request $request) {
-//     return $request->user();
+//     return $request->user(); 
 // })->middleware('auth:api');
 
 //Open Route
@@ -42,6 +43,8 @@ Route::group([
     Route::delete("deleteposts/{id}", [PostController::class, "deleteposts"]);
     Route::post("feedposts", [FeedPostController::class, "feedposts"]);
     Route::post("subscribtion", [SubscribtionController::class, "subscribtion"]);
+    Route::get("viewsubscribtion", [SubscribtionController::class, "viewsubscribtion"]);
+    Route::put("unsubscribe", [UnsubscribeController::class, "unsubscribe"]);
     Route::put("updatefeedposts/{id}", [FeedPostController::class, "updatefeedposts"]);
     Route::delete("deletefeedposts/{id}", [FeedPostController::class, "deletefeedposts"]);
 

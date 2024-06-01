@@ -18,7 +18,8 @@ class FeedPostController extends Controller
             "user_name" => "required",
             "unique_id" => "required",
             "user_email" => "required|email",
-            "post_img_path" => "nullable|image|array|max:2048",
+            'post_img_path' => 'array',
+            'post_img_path.*' => 'nullable|image|max:2048',
             'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
             "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
             "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
@@ -32,7 +33,7 @@ class FeedPostController extends Controller
 
         // Handle image upload and resizing
         $imagePaths = [];
-        $imagePath = ""; // Initialize $imagePath outside the loop
+
         if ($request->hasFile('post_img_path')) {
             foreach ($request->file('post_img_path') as $imageFile) {
                 $imageSize = $imageFile->getSize();
@@ -53,6 +54,7 @@ class FeedPostController extends Controller
         } else {
             $imagePaths[] = "no image uploaded";
         }
+
 
 
 
@@ -107,7 +109,8 @@ class FeedPostController extends Controller
     $request->validate([
         "avatar_path" => "nullable",
             "post_id" => "required",
-            "post_img_path" => "nullable|image|max:2048",
+            'post_img_path' => 'array',
+            'post_img_path.*' => 'nullable|image|max:2048',
             'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
             "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
             "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
@@ -130,23 +133,30 @@ class FeedPostController extends Controller
                 $post->hashtags = $request->hashtags;
               
                 // Handle image upload
+                $imagePaths = [];
+
                 if ($request->hasFile('post_img_path')) {
-                    $imageFile = $request->file('post_img_path');
-                    $imageSize = $imageFile->getSize();
+                    foreach ($request->file('post_img_path') as $imageFile) {
+                        $imageSize = $imageFile->getSize();
 
-                    if ($imageSize > 2048000) { // 2MB in bytes
-                        $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
-                            $constraint->aspectRatio();
-                            $constraint->upsize();
-                        });
+                        if ($imageSize > 2048000) { // 2MB in bytes
+                            $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
+                                $constraint->aspectRatio();
+                                $constraint->upsize();
+                            });
 
-                        $imagePath = 'public/feedimages/' . $imageFile->hashName();
-                        $image->save(storage_path('app/' . $imagePath));
-                    } else {
-                        $imagePath = $imageFile->store('public/feedimages');
+                            $imagePath = 'public/feedimages/' . $imageFile->hashName();
+                            $image->save(storage_path('app/' . $imagePath));
+                        } else {
+                            $imagePath = $imageFile->store('public/feedimages');
+                        }
+                        $imagePaths[] = $imagePath;
                     }
-                    $post->post_img_path = $imagePath;
+                } else {
+                    $imagePaths[] = "no image uploaded";
                 }
+
+
 
                 // Handle video upload
                 if ($request->hasFile('post_vid_path')) {
