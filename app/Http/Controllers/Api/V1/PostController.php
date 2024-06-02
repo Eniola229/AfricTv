@@ -10,7 +10,7 @@ use App\Models\Post;
 class PostController extends Controller
 {
     public function posts(Request $request)
-    {
+    { 
         // Data Validation
         $request->validate([
             "user_id" => "required",
