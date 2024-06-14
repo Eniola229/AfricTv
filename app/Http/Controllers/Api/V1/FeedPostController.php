@@ -31,9 +31,8 @@ class FeedPostController extends Controller
             "date" => "nullable|date",
         ]);
 
-        // Handle image upload and resizing
+         // Handle image upload and resizing
         $imagePaths = [];
-
         if ($request->hasFile('post_img_path')) {
             foreach ($request->file('post_img_path') as $imageFile) {
                 $imageSize = $imageFile->getSize();
@@ -54,7 +53,6 @@ class FeedPostController extends Controller
         } else {
             $imagePaths[] = "no image uploaded";
         }
-
 
 
 
@@ -87,7 +85,7 @@ class FeedPostController extends Controller
             "user_name" => $request->user_name,
             "unique_id" => $request->unique_id,
             "user_email" => $request->user_email,
-            "post_img_path" => $imagePath,
+            "post_img_path" => json_encode($imagePaths),
             "post_vid_path" => $videoPath,
             // "post_pdf_path" => $docPath,
             // "post_song_path" => $songPath,

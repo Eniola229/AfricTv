@@ -9,30 +9,32 @@ use App\Models\Post;
 
 class PostController extends Controller
 {
-    public function posts(Request $request)
+     public function posts(Request $request)
     { 
         // Data Validation
         $request->validate([
             "user_id" => "required",
             "user_name" => "required",
-            "unique_id" => "required",
+            "unique_id" => "required", 
             "user_email" => "required|email",
-            "post_title" => "required",
+            "cover_image" => 'required|image|max:2048',
             'post_img_path' => 'array',
             'post_img_path.*' => 'nullable|image|max:2048',
             'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
             "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
             "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
             "category" => "required",
-            "link" => "nullable",
-            "post_intro" => "required",
-            "post_body" => "required",
-            "post_ending" => "required",
+            "post_title" => "required",
+            "PostbodyHtml" => "nullable",
+            "postbodyJson" => "nullable",
+            "postBodytext" => "nullable",
             "post_views" => "nullable",
+            "link" => "nullable",
+            "hashtags" => "nullable",
+            "post_ending" => "nullable",
             "date" => "nullable|date",
         ]);
 
-   
         // Handle image upload and resizing
         $imagePaths = [];
         if ($request->hasFile('post_img_path')) {
@@ -56,6 +58,34 @@ class PostController extends Controller
             $imagePaths[] = "no image uploaded";
         }
 
+        if ($request->hasFile('cover_image')) {
+            $imageFile = $request->file('cover_image');
+            $imageSize = $imageFile->getSize();
+
+            try {
+                if ($imageSize > 2048000) { // 2MB in bytes
+                    $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+
+                    $coverImagePath = 'public/blogcoverimages/' . $imageFile->hashName();
+                    $image->save(storage_path('app/' . $coverImagePath));
+                } else {
+                    $coverImagePath = $imageFile->store('public/blogcoverimages');
+                }
+            } catch (\Exception $e) {
+                return response()->json([
+                    "status" => false,
+                    "message" => "Error processing image: " . $e->getMessage()
+                ], 500);
+            }
+        } else {
+            return response()->json([
+                "status" => false,
+                "message" => "Cover Image Required"
+            ], 400);
+        }
 
         // Handle video upload
         if ($request->hasFile('post_vid_path')) {
@@ -84,113 +114,147 @@ class PostController extends Controller
             "user_name" => $request->user_name,
             "unique_id" => $request->unique_id,
             "user_email" => $request->user_email,
-            "post_title" => $request->post_title,
-            "post_img_path" => $imagePath,
+            "cover_image" => $coverImagePath,
+            "post_img_path" => json_encode($imagePaths),
             "post_vid_path" => $videoPath,
             "post_pdf_path" => $docPath,
             "post_song_path" => $songPath,
             "category" => $request->category,
-            "link" => $request->link,
-            "post_intro" => $request->post_intro,
-            "post_body" => $request->post_body,
-            "post_ending" => $request->post_ending,
+            "post_title" => $request->post_title,
+            "PostbodyHtml" => $request->PostbodyHtml,
+            "postbodyJson" => $request->postbodyJson,
+            "postBodytext" => $request->postBodytext,
             "post_views" => $request->post_views ?? 0,
+            "link" => $request->link,
+            "hashtags" => $request->hashtags,
+            "post_ending" => $request->post_ending,
             "date" => $request->date,
         ]);
 
         return response()->json([
             "status" => true,
-            "message" => "Post Uploaded Successfully"
+            "message" => "BlogPost Uploaded Successfully"
         ]);
     }
-   public function updateposts(Request $request)
-{
-    $request->validate([
-        "user_id" => "required",
-        "post_title" => "nullable",
-        'post_img_path' => 'array',
-        'post_img_path.*' => 'nullable|image|max:2048',
-        'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
-        "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
-        "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
-        "category" => "required",
-        "link" => "nullable",
-        "post_intro" => "nullable",
-        "post_body" => "required",
-        "post_ending" => "nullable",
-        "post_views" => "nullable",
-        "date" => "nullable|date",
-    ]);
 
-            $postId = $request->input('post_id'); 
-            $post = Post::find($postId);
+      public function updateposts(Request $request)
+    {
+        $request->validate([
+            "post_id" => "required|exists:posts,id",
+            "cover_image" => 'nullable|image|max:2048',
+            'post_img_path' => 'array',
+            'post_img_path.*' => 'nullable|image|max:2048',
+            'post_vid_path' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
+            "post_pdf_path" => "nullable|mimes:pdf,doc,docx",
+            "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
+            "category" => "required",
+            "post_title" => "required",
+            "PostbodyHtml" => "nullable",
+            "postbodyJson" => "nullable",
+            "postBodytext" => "nullable",
+            "link" => "nullable",
+            "hashtags" => "nullable",
+            "post_ending" => "nullable",
+        ]);
 
-            if ($post) {
-                // Update post properties
-                $post->post_title = $request->post_title;
-                $post->category = $request->category;
-                $post->link = $request->link;
-                $post->post_intro = $request->post_intro;
-                $post->post_body = $request->post_body;
-                $post->post_ending = $request->post_ending;
+        $postId = $request->input('post_id'); 
+        $post = Post::find($postId);
 
-                // Handle image upload
-                 $imagePaths = [];
-                if ($request->hasFile('post_img_path')) {
-                    foreach ($request->file('post_img_path') as $imageFile) {
-                        $imageSize = $imageFile->getSize();
+        if ($post) {
+            // Update post properties
+            $post->post_title = $request->post_title;
+            $post->category = $request->category;
+            $post->link = $request->link;
+            $post->PostbodyHtml = $request->PostbodyHtml;
+            $post->postbodyJson = $request->postbodyJson;
+            $post->postBodytext = $request->postBodytext;
+            $post->hashtags = $request->hashtags;
+            $post->post_ending = $request->post_ending;
 
-                        if ($imageSize > 2048000) { // 2MB in bytes
-                            $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
-                                $constraint->aspectRatio();
-                                $constraint->upsize();
-                            });
+            // Handle cover image upload
+            if ($request->hasFile('cover_image')) {
+                $imageFile = $request->file('cover_image');
+                $imageSize = $imageFile->getSize();
 
-                            $imagePath = 'public/images/' . $imageFile->hashName();
-                            $image->save(storage_path('app/' . $imagePath));
-                        } else {
-                            $imagePath = $imageFile->store('public/images');
-                        }
-                        $imagePaths[] = $imagePath;
+                try {
+                    if ($imageSize > 2048000) { // 2MB in bytes
+                        $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
+
+                        $coverImagePath = 'public/blogcoverimages/' . $imageFile->hashName();
+                        $image->save(storage_path('app/' . $coverImagePath));
+                    } else {
+                        $coverImagePath = $imageFile->store('public/blogcoverimages');
                     }
-                } else {
-                    $imagePaths[] = "no image uploaded";
+                    $post->cover_image = $coverImagePath;
+                } catch (\Exception $e) {
+                    return response()->json([
+                        "status" => false,
+                        "message" => "Error processing cover image: " . $e->getMessage()
+                    ], 500);
                 }
-                // Handle video upload
-                if ($request->hasFile('post_vid_path')) {
-                    $videoPath = $request->file('post_vid_path')->store('public/videos');
-                    $post->post_vid_path = $videoPath;
-                }
-
-                // Handle document upload
-                if ($request->hasFile('post_pdf_path')) {
-                    $docPath = $request->file('post_pdf_path')->store('public/documents');
-                    $post->post_pdf_path = $docPath;
-                }
-
-                // Handle song upload
-                if ($request->hasFile('post_song_path')) {
-                    $songPath = $request->file('post_song_path')->store('public/songs');
-                    $post->post_song_path = $songPath;
-                }
-
-                // Save the updated post
-                $post->save();
-
-                // // Send mail if it was successful
-                // Mail::to($request->user_email)->send(new ProfileUpdateMail($post));
-
-                return response()->json([
-                    "status" => true,
-                    "message" => "Post Updated Successfully"
-                ]);
-            } else {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Post Not Found"
-                ]);
             }
+
+            // Handle image upload
+            $imagePaths = [];
+            if ($request->hasFile('post_img_path')) {
+                foreach ($request->file('post_img_path') as $imageFile) {
+                    $imageSize = $imageFile->getSize();
+
+                    if ($imageSize > 2048000) { // 2MB in bytes
+                        $image = Image::make($imageFile)->resize(500, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
+
+                        $imagePath = 'public/images/' . $imageFile->hashName();
+                        $image->save(storage_path('app/' . $imagePath));
+                    } else {
+                        $imagePath = $imageFile->store('public/images');
+                    }
+                    $imagePaths[] = $imagePath;
+                }
+                $post->post_img_path = json_encode($imagePaths);
+            }
+
+            // Handle video upload
+            if ($request->hasFile('post_vid_path')) {
+                $videoPath = $request->file('post_vid_path')->store('public/videos');
+                $post->post_vid_path = $videoPath;
+            }
+
+            // Handle document upload
+            if ($request->hasFile('post_pdf_path')) {
+                $docPath = $request->file('post_pdf_path')->store('public/documents');
+                $post->post_pdf_path = $docPath;
+            }
+
+            // Handle song upload
+            if ($request->hasFile('post_song_path')) {
+                $songPath = $request->file('post_song_path')->store('public/songs');
+                $post->post_song_path = $songPath;
+            }
+
+            // Save the updated post
+            $post->save();
+
+            // Send mail if it was successful (commented out)
+            // Mail::to($request->user_email)->send(new ProfileUpdateMail($post));
+
+            return response()->json([
+                "status" => true,
+                "message" => "BlogPost Updated Successfully"
+            ]);
+        } else {
+            return response()->json([
+                "status" => false,
+                "message" => "BlogPost Not Found"
+            ]);
         }
+    }
+
 
        public function deleteposts(Request $request)
         {
@@ -218,7 +282,7 @@ class PostController extends Controller
 
         public function readpost()
         {
-            $posts = Post::all(); // Retrieve all posts from the database
+            $posts = Post::all(); // Retrieve all posts
 
             return response()->json([
                 'status' => true,

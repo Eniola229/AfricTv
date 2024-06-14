@@ -17,15 +17,19 @@ return new class extends Migration
             $table->string('user_name');
             $table->string('unique_id');
             $table->string('user_email');
-            $table->string('post_title'); 
+            $table->string('cover_image');
             $table->string('post_img_path');
             $table->string('post_vid_path');
             $table->string('post_pdf_path');
             $table->string('post_song_path');
             $table->string('category');
-            $table->string('link')->nullable();
             $table->string('post_intro')->nullable();
-            $table->string('post_body');
+            $table->string('post_title'); 
+            $table->string('PostbodyHtml');
+            $table->string('postbodyJson');
+            $table->string('postBodytext');
+            $table->string('link')->nullable();
+            $table->string('hashtags')->nullable();
             $table->string('post_ending')->nullable();
             $table->integer('post_views')->default(0); // Assuming it's an integer type
             $table->date('date')->nullable();

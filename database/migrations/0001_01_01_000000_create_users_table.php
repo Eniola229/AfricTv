@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->string('subscribtion_status')->nullable();
             $table->string('verification_status')->nullable();
+            $table->string('subscribers_number');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

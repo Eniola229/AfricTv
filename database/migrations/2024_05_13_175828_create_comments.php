@@ -13,6 +13,7 @@ return new class extends Migration
         Schema::create('comments', function (Blueprint $table) {
             $table->id(); // Primary key
             $table->unsignedBigInteger('post_id'); // Foreign key column
+            $table->string('post_email');
             $table->string('user_id');
             $table->string('user_email');
             $table->string('user_name');

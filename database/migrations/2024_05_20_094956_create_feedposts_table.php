@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('link')->nullable();
             $table->string('hashtags')->nullable();
             $table->string('post_body');
+            $table->string('avatar_path');
+            $table->string('user');
             $table->integer('post_views')->default(0); // Assuming it's an integer type
             $table->date('date')->nullable();
             $table->timestamps();

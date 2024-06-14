@@ -9,22 +9,29 @@ use App\Http\Controllers\Api\V1\FeedbackController;
 use App\Http\Controllers\Api\V1\AdsPayment;
 use App\Http\Controllers\Api\V1\AdsPaymentController;
 use App\Http\Controllers\Api\V1\PostController;
-use App\Http\Controllers\Api\V1\FeedPostController;
+use App\Http\Controllers\Api\V1\FeedPostController; 
 use App\Http\Controllers\Api\V1\SubscribtionController;
 use App\Http\Controllers\Api\V1\UnsubscribeController;
+use App\Http\Controllers\Api\V1\CommentsController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user(); 
 // })->middleware('auth:api');
 
 //Open Route
+//Auth Endpoint
 Route::post('register', [ApiController::class, 'register']);
 Route::post("login", [ApiController::class, "login"]);
 Route::post('forgot_password', [NewPasswordController::class, 'forgotPassword']);
 Route::post('reset_password', [NewPasswordController::class, 'resetPassword']);
+//Feed back Endpoint
 Route::post('feedback', [FeedbackController::class, 'feedback']);
+//Read BlogPost End Point
 Route::get('readpost', [PostController::class, 'readpost']);
+//Read FeedPost End Point
 Route::get('readfeedpost', [FeedPostController::class, 'readfeedpost']);
+//Read Comment End Point
+Route::get('readcomment', [CommentsController::class, 'readcomment']);
 
 
 
@@ -32,20 +39,29 @@ Route::get('readfeedpost', [FeedPostController::class, 'readfeedpost']);
 Route::group([
     "middleware" => ["auth:api"]
 ], function(){
-    Route::post("payment", [ApiController::class, "payment"]);
+    //THis is the Auth User Actions End point
     Route::get("profile", [ApiController::class, "profile"]);
     Route::post("logout", [ApiController::class, "logout"]);
     Route::put("updateprofile/{id}", [ApiController::class, "updateprofile"]);
+    //THis is the Payments Endpoint
+    Route::post("payment", [ApiController::class, "payment"]);
     Route::post("carddetails", [UserCardDetails::class, "carddetails"]);
     Route::post("adsPayment", [AdsPaymentController::class, "adsPayment"]);
+    //THis is the BlogPost End Point
     Route::post("posts", [PostController::class, "posts"]);
     Route::put("updateposts/{id}", [PostController::class, "updateposts"]);
     Route::delete("deleteposts/{id}", [PostController::class, "deleteposts"]);
     Route::post("feedposts", [FeedPostController::class, "feedposts"]);
+    //THis is the Subscribtion Endpint
     Route::post("subscribtion", [SubscribtionController::class, "subscribtion"]);
     Route::get("viewsubscribtion", [SubscribtionController::class, "viewsubscribtion"]);
     Route::put("unsubscribe", [UnsubscribeController::class, "unsubscribe"]);
+    //THis is the FeedPost EndPoint
     Route::put("updatefeedposts/{id}", [FeedPostController::class, "updatefeedposts"]);
     Route::delete("deletefeedposts/{id}", [FeedPostController::class, "deletefeedposts"]);
+    //This is the Comment EndPoint
+    Route::post("comments", [CommentsController::class, "comments"]);
+    Route::put("updatecomments/{id}", [CommentsController::class, "updatecomments"]);
+    
 
 });
