@@ -51,6 +51,7 @@ class PostController extends Controller
                     $image->save(storage_path('app/' . $imagePath));
                 } else {
                     $imagePath = $imageFile->store('public/images');
+                    $imagePath = str_replace('public/', '', $imagePath);
                 }
                 $imagePaths[] = $imagePath;
             }
@@ -73,6 +74,7 @@ class PostController extends Controller
                     $image->save(storage_path('app/' . $coverImagePath));
                 } else {
                     $coverImagePath = $imageFile->store('public/blogcoverimages');
+                    $coverImagePath = str_replace('public/', '', $coverImagePath);
                 }
             } catch (\Exception $e) {
                 return response()->json([
@@ -89,14 +91,32 @@ class PostController extends Controller
 
         // Handle video upload
         if ($request->hasFile('post_vid_path')) {
-            $videoPath = $request->file('post_vid_path')->store('public/videos');
-        } else {
-            $videoPath = "no file uploaded";
-        }
+            $file = $request->file('post_vid_path');
 
+            // Check video duration
+            $media = FFMpeg::open($file->getPathname());
+            $duration = $media->getDurationInSeconds();
+
+            if ($duration > 7200) { // 7200 seconds = 2 hours
+                return response()->json([
+                'status' => false,
+                'message' => 'Video duration should not exceed 2 hours.',
+                ]);
+            }
+
+            // Store the video
+            $videoPath = $file->store('public/blogsvideos');
+                
+            // Save the path to the database
+            $video = new Post();
+            $video->post_vid_path = $videoPath;
+            $videoPath = str_replace('public/', '', $videoPath);
+            $video->save();
+        }
         // Handle document upload
         if ($request->hasFile('post_pdf_path')) {
             $docPath = $request->file('post_pdf_path')->store('public/documents');
+            $docPath = str_replace('public/', '', $docPath);
         } else {
             $docPath = "no file uploaded";
         }
@@ -104,6 +124,7 @@ class PostController extends Controller
         // Handle song upload
         if ($request->hasFile('post_song_path')) {
             $songPath = $request->file('post_song_path')->store('public/songs');
+            $songPath = str_replace('public/', '', $songPath);
         } else {
             $songPath = "no file uploaded";
         }
@@ -187,6 +208,7 @@ class PostController extends Controller
                         $image->save(storage_path('app/' . $coverImagePath));
                     } else {
                         $coverImagePath = $imageFile->store('public/blogcoverimages');
+                        $coverImagePath = str_replace('public/', '', $coverImagePath);
                     }
                     $post->cover_image = $coverImagePath;
                 } catch (\Exception $e) {
@@ -213,30 +235,61 @@ class PostController extends Controller
                         $image->save(storage_path('app/' . $imagePath));
                     } else {
                         $imagePath = $imageFile->store('public/images');
+                        $imagePath = str_replace('public/', '', $imagePath);
                     }
                     $imagePaths[] = $imagePath;
                 }
                 $post->post_img_path = json_encode($imagePaths);
             }
 
-            // Handle video upload
+           // Handle video upload
             if ($request->hasFile('post_vid_path')) {
                 $videoPath = $request->file('post_vid_path')->store('public/videos');
-                $post->post_vid_path = $videoPath;
+                $videoPath = str_replace('public/', '', $videoPath);
+            } else {
+                $videoPath = "no file uploaded";
             }
+
+          // Handle video upload
+            if ($request->hasFile('post_vid_path')) {
+                $file = $request->file('post_vid_path');
+
+                // Check video duration
+                $media = FFMpeg::open($file->getPathname());
+                $duration = $media->getDurationInSeconds();
+
+                if ($duration > 7200) { // 7200 seconds = 2 hours
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Video duration should not exceed 2 hours.',
+                    ]);
+                }
+
+                // Store the video
+                $videoPath = $file->store('public/commentsvideos');
+                
+                // Save the path to the database
+                $video = new Post();
+                $video->post_vid_path = $videoPath;
+                $videoPath = str_replace('public/', '', $videoPath);
+                $video->save();
+              }
 
             // Handle document upload
             if ($request->hasFile('post_pdf_path')) {
                 $docPath = $request->file('post_pdf_path')->store('public/documents');
-                $post->post_pdf_path = $docPath;
+                $docPath = str_replace('public/', '', $docPath);
+            } else {
+                $docPath = "no file uploaded";
             }
 
             // Handle song upload
             if ($request->hasFile('post_song_path')) {
                 $songPath = $request->file('post_song_path')->store('public/songs');
-                $post->post_song_path = $songPath;
+                $songPath = str_replace('public/', '', $songPath);
+            } else {
+                $songPath = "no file uploaded";
             }
-
             // Save the updated post
             $post->save();
 
@@ -283,6 +336,7 @@ class PostController extends Controller
         public function readpost()
         {
             $posts = Post::all(); // Retrieve all posts
+            $postCount = $posts->count();
 
             return response()->json([
                 'status' => true,

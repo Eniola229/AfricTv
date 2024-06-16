@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Comments;
 use Intervention\Image\Facades\Image;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class CommentsController extends Controller
 {
@@ -39,13 +40,36 @@ class CommentsController extends Controller
                     $image->save(storage_path('app/' . $imagePath));
                 } else {
                     $imagePath = $imageFile->store('public/commentsimages');
+                    $imagePath = str_replace('public/', '', $imagePath);
                 }
                 $imagePaths[] = $imagePath;
             }
         }
 
         // Handle video upload
-        $videoPath = $request->hasFile('comments_vid_path') ? $request->file('comments_vid_path')->store('public/commentsvideos') : null;
+        if ($request->hasFile('comments_vid_path')) {
+            $file = $request->file('comments_vid_path');
+
+            // Check video duration
+            $media = FFMpeg::open($file->getPathname());
+            $duration = $media->getDurationInSeconds();
+
+            if ($duration > 7200) { // 7200 seconds = 2 hours
+                return response()->json([
+                    'status' => false
+                    'message' => 'Video duration should not exceed 2 hours.'
+                ]);
+            }
+
+            // Store the video
+            $videoPath = $file->store('public/commentsvideos');
+            
+            // Save the path to the database
+            $comment = new Comments();
+            $comment->comments_vid_path = $videoPath;
+            $videoPath = str_replace('public/', '', $videoPath);
+            $comment->save();
+          }
 
         $comments = Comments::create([
             "post_id" => $request->post_id,
@@ -109,6 +133,7 @@ class CommentsController extends Controller
                             $image->save(storage_path('app/' . $imagePath));
                         } else {
                             $imagePath = $imageFile->store('public/commentsimages');
+                            $imagePath = str_replace('public/', '', $imagePath);
                         }
                         $imagePaths[] = $imagePath;
                     }
@@ -120,9 +145,28 @@ class CommentsController extends Controller
 
                 // Handle video upload
                 if ($request->hasFile('comments_vid_path')) {
-                    $videoPath = $request->file('comments_vid_path')->store('public/commentsvideos');
+                    $file = $request->file('comments_vid_path');
+
+                    // Check video duration
+                    $media = FFMpeg::open($file->getPathname());
+                    $duration = $media->getDurationInSeconds();
+
+                    if ($duration > 7200) { // 7200 seconds = 2 hours
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Video duration should not exceed 2 hours.',
+                        ]);
+                    }
+
+                    // Store the video
+                    $videoPath = $file->store('public/commentsvideos');
+                    
+                    // Save the path to the database
+                    $comment = new Comments();
                     $comment->comments_vid_path = $videoPath;
-                }
+                    $videoPath = str_replace('public/', '', $videoPath);
+                    $comment->save();
+                  }
 
                 // Handle document upload
                 // if ($request->hasFile('post_pdf_path')) {

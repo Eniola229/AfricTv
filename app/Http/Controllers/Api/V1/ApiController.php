@@ -49,9 +49,11 @@ class ApiController extends Controller
 
                         // Store the resized avatar
                          $avatarPath = $request->file('avatar')->store('public/avatars');
+                         $avatarPath = str_replace('public/', '', $avatarPath);
                     } else {
                         // Avatar is within 2MB size limit, store it as usual
                         $avatarPath = $request->file('avatar')->store('public/avatars');
+                        $avatarPath = str_replace('public/', '', $avatarPath);
                     }
              } else {
                 $avatarPath = null;
@@ -257,14 +259,18 @@ class ApiController extends Controller
     {
         $user = auth()->user();
         $userPosts = Post::where('user_id', $user->id)->get();
+        $postCount = $userPosts->count();
+
         $feedPosts = Feedposts::where('user_id', $user->id)->get();
+        $feedpostCount = $userPosts->count();
         return response()->json([
             'status' => true,
             'message' => 'Profile data',
             'user' => $user,
+            'noofblogpost' => $postCount,
             'blogposts' => $userPosts,
+            'noofpost' => $feedpostCount,
             'feedposts' => $feedPosts,
-
     ]);
   }
 

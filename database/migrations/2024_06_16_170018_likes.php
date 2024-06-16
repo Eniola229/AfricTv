@@ -12,14 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('likes', function (Blueprint $table) {
-            $table->id();
-            $table->string('user_id');
+            $table->bigIncrements('id'); // Primary key
+            $table->integer('user_id'); 
             $table->string('user_email');
-            $table->string('user_name');
-            $table->string('unique_id');
-            $table->string('click');
-            $table->date('date');
-            // $table->foreign('id')->references('id')->on('posts')->onDelete('cascade');
+            $table->integer('post_id');
+            $table->string('post_email');
+            $table->string('reaction_type')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('likes');
+         Schema::dropIfExists('likes');
     }
 };

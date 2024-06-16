@@ -47,6 +47,7 @@ class FeedPostController extends Controller
                     $image->save(storage_path('app/' . $imagePath));
                 } else {
                     $imagePath = $imageFile->store('public/feedimages');
+                    $imagePath = str_replace('public/', '', $imagePath);
                 }
                 $imagePaths[] = $imagePath;
             }
@@ -60,6 +61,7 @@ class FeedPostController extends Controller
         // Handle video upload
         if ($request->hasFile('post_vid_path')) {
             $videoPath = $request->file('post_vid_path')->store('public/feedvideos');
+            $videoPath = str_replace('public/', '', $videoPath);
         } else {
             $videoPath = "no file uploaded";
         }
@@ -147,6 +149,7 @@ class FeedPostController extends Controller
                             $image->save(storage_path('app/' . $imagePath));
                         } else {
                             $imagePath = $imageFile->store('public/feedimages');
+                            $imagePath = str_replace('public/', '', $imagePath);
                         }
                         $imagePaths[] = $imagePath;
                     }
@@ -154,12 +157,29 @@ class FeedPostController extends Controller
                     $imagePaths[] = "no image uploaded";
                 }
 
-
-
-                // Handle video upload
+                 // Handle video upload
                 if ($request->hasFile('post_vid_path')) {
-                    $videoPath = $request->file('post_vid_path')->store('public/feedvideos');
-                    $post->post_vid_path = $videoPath;
+                        $file = $request->file('post_vid_path');
+
+                        // Check video duration
+                        $media = FFMpeg::open($file->getPathname());
+                        $duration = $media->getDurationInSeconds();
+
+                        if ($duration > 7200) { // 7200 seconds = 2 hours
+                            return response()->json([
+                            'status' => false,
+                            'message' => 'Video duration should not exceed 2 hours.',
+                            ]);
+                        }
+
+                        // Store the video
+                        $videoPath = $file->store('public/feedvideos');
+                            
+                        // Save the path to the database
+                        $video = new Post();
+                        $video->post_vid_path = $videoPath;
+                        $videoPath = str_replace('public/', '', $videoPath);
+                        $video->save();
                 }
 
                 // Handle document upload

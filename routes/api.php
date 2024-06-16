@@ -35,7 +35,7 @@ Route::get('readcomment', [CommentsController::class, 'readcomment']);
 
 
 
-//Protected Route 
+//Protected Route  
 Route::group([
     "middleware" => ["auth:api"]
 ], function(){
