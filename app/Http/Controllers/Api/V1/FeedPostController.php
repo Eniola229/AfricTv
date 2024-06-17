@@ -31,6 +31,12 @@ class FeedPostController extends Controller
             "date" => "nullable|date",
         ]);
 
+         $firstWord = strtok($request->user_name, ' ');
+            // Generate a random four-digit number
+            $randomNumber = rand(10000, 99999);
+
+            $postID = '@' .$firstWord . $randomNumber;
+
          // Handle image upload and resizing
         $imagePaths = [];
         if ($request->hasFile('post_img_path')) {
@@ -60,11 +66,30 @@ class FeedPostController extends Controller
 
         // Handle video upload
         if ($request->hasFile('post_vid_path')) {
-            $videoPath = $request->file('post_vid_path')->store('public/feedvideos');
+            $file = $request->file('post_vid_path');
+
+            // Check video duration
+            $media = FFMpeg::open($file->getPathname());
+            $duration = $media->getDurationInSeconds();
+
+            if ($duration > 7200) { // 7200 seconds = 2 hours
+                return response()->json([
+                'status' => false,
+                'message' => 'Video duration should not exceed 2 hours.',
+                ]);
+            }
+
+            // Store the video
+            $videoPath = $file->store('public/feedvideos');
+                
+            // Save the path to the database
+            $video = new Post();
+            $video->post_vid_path = $videoPath;
             $videoPath = str_replace('public/', '', $videoPath);
-        } else {
-            $videoPath = "no file uploaded";
-        }
+            $video->save();
+        }else {
+            $videoPath = "no voideo uploaded";
+        } 
 
         // Handle document upload
         // if ($request->hasFile('post_pdf_path')) {
@@ -83,6 +108,7 @@ class FeedPostController extends Controller
         // Storing post data
         $post = Feedposts::create([
             "avatar_path" => $request->avatar_path,
+            "post_id" => $postID,
             "user_id" => $request->user_id,
             "user_name" => $request->user_name,
             "unique_id" => $request->unique_id,
@@ -157,8 +183,8 @@ class FeedPostController extends Controller
                     $imagePaths[] = "no image uploaded";
                 }
 
-                 // Handle video upload
-                if ($request->hasFile('post_vid_path')) {
+                  // Handle video upload
+                    if ($request->hasFile('post_vid_path')) {
                         $file = $request->file('post_vid_path');
 
                         // Check video duration
@@ -180,7 +206,9 @@ class FeedPostController extends Controller
                         $video->post_vid_path = $videoPath;
                         $videoPath = str_replace('public/', '', $videoPath);
                         $video->save();
-                }
+                    }else {
+                        $videoPath = "no video uploaded";
+                    } 
 
                 // Handle document upload
                 // if ($request->hasFile('post_pdf_path')) {

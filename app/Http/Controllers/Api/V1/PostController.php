@@ -25,15 +25,21 @@ class PostController extends Controller
             "post_song_path" => "nullable|mimes:mp3,wav,aac,flac",
             "category" => "required",
             "post_title" => "required",
-            "PostbodyHtml" => "nullable",
-            "postbodyJson" => "nullable",
-            "postBodytext" => "nullable",
+            "PostbodyHtml" => "required",
+            "postbodyJson" => "required",
+            "postBodytext" => "required",
             "post_views" => "nullable",
             "link" => "nullable",
             "hashtags" => "nullable",
             "post_ending" => "nullable",
             "date" => "nullable|date",
         ]);
+
+        $firstWord = strtok($request->user_name, ' ');
+        // Generate a random four-digit number
+        $randomNumber = rand(10000, 99999);
+
+        $postID = '@' .$firstWord . $randomNumber;
 
         // Handle image upload and resizing
         $imagePaths = [];
@@ -112,7 +118,11 @@ class PostController extends Controller
             $video->post_vid_path = $videoPath;
             $videoPath = str_replace('public/', '', $videoPath);
             $video->save();
-        }
+        }else {
+            $videoPath = "no video uploaded";
+        } 
+
+
         // Handle document upload
         if ($request->hasFile('post_pdf_path')) {
             $docPath = $request->file('post_pdf_path')->store('public/documents');
@@ -133,6 +143,7 @@ class PostController extends Controller
         $post = Post::create([
             "user_id" => $request->user_id,
             "user_name" => $request->user_name,
+            "post_id" => $postID,
             "unique_id" => $request->unique_id,
             "user_email" => $request->user_email,
             "cover_image" => $coverImagePath,
@@ -273,7 +284,9 @@ class PostController extends Controller
                 $video->post_vid_path = $videoPath;
                 $videoPath = str_replace('public/', '', $videoPath);
                 $video->save();
-              }
+              } else {
+                 $videoPath = "no video uploaded";
+              } 
 
             // Handle document upload
             if ($request->hasFile('post_pdf_path')) {
@@ -335,7 +348,7 @@ class PostController extends Controller
 
         public function readpost()
         {
-            $posts = Post::all(); // Retrieve all posts
+            $posts = Post::all();
             $postCount = $posts->count();
 
             return response()->json([

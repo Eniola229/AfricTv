@@ -24,6 +24,7 @@ class Feedposts extends Model
         'hashtags',
         'post_body',
         'post_views',
+        'post_id',
         'date',
     ];
 }

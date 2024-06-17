@@ -27,6 +27,7 @@ class Post extends Model
         'link',
         'hashtags',
         'post_ending',
+        'post_id',
         'date',
     ];
 }

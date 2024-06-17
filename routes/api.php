@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\V1\FeedPostController;
 use App\Http\Controllers\Api\V1\SubscribtionController;
 use App\Http\Controllers\Api\V1\UnsubscribeController;
 use App\Http\Controllers\Api\V1\CommentsController;
+use App\Http\Controllers\Api\V1\LikeController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user(); 
@@ -32,6 +33,8 @@ Route::get('readpost', [PostController::class, 'readpost']);
 Route::get('readfeedpost', [FeedPostController::class, 'readfeedpost']);
 //Read Comment End Point
 Route::get('readcomment', [CommentsController::class, 'readcomment']);
+//Read Like End Point
+Route::get('readlikes', [CommentsController::class, 'readlikes']);
 
 
 
@@ -62,6 +65,11 @@ Route::group([
     //This is the Comment EndPoint
     Route::post("comments", [CommentsController::class, "comments"]);
     Route::put("updatecomments/{id}", [CommentsController::class, "updatecomments"]);
+    Route::put("deletecomment/{id}", [CommentsController::class, "deletecomment"]);
+    //This is the Like EndPoint
+    Route::post("like", [LikeController::class, "like"]);
+    Route::put("unlike/{id}", [LikeController::class, "unlike"]);
+
     
 
 });

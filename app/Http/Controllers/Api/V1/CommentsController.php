@@ -56,7 +56,7 @@ class CommentsController extends Controller
 
             if ($duration > 7200) { // 7200 seconds = 2 hours
                 return response()->json([
-                    'status' => false
+                    'status' => false,
                     'message' => 'Video duration should not exceed 2 hours.'
                 ]);
             }
@@ -69,7 +69,9 @@ class CommentsController extends Controller
             $comment->comments_vid_path = $videoPath;
             $videoPath = str_replace('public/', '', $videoPath);
             $comment->save();
-          }
+          } else {
+            $videoPath = "no video uploaded";
+        } 
 
         $comments = Comments::create([
             "post_id" => $request->post_id,
@@ -166,7 +168,9 @@ class CommentsController extends Controller
                     $comment->comments_vid_path = $videoPath;
                     $videoPath = str_replace('public/', '', $videoPath);
                     $comment->save();
-                  }
+                  } else {
+                        $videoPath = "no video uploaded";
+                    } 
 
                 // Handle document upload
                 // if ($request->hasFile('post_pdf_path')) {
@@ -225,7 +229,7 @@ class CommentsController extends Controller
         public function readComment(Request $request)
         {
             $validated = $request->validate([
-                'post_id' => 'required|integer',
+                'post_id' => 'required|string',
             ]);
 
             $postId = $validated['post_id'];
