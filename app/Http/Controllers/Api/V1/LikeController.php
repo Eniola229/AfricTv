@@ -14,13 +14,13 @@ class LikeController extends Controller
             "user_email" => "required",
             "post_id" => "required",
             "post_email" => "required",
-            "reaction_type" => "required|email",
+            "reaction_type" => "required|max:55",
         ]);
 
         $likes = Likes::create([
-            "user_id" => $request->post_id,
+            "user_id" => $request->user_id,
             "user_email" => $request->post_email,
-            "post_id" => $request->user_id,
+            "post_id" => $request->post_id,
             "post_email" => $request->user_email,
             "reaction_type" => $request->user_name,
         ]);
@@ -37,7 +37,7 @@ class LikeController extends Controller
                 'like_id' => 'required|integer'
             ]);
 
-            $likeId = $request->input('like_id');
+            $likeId = $request->input('like_id'); 
             $like = Likes::find($likeId);
 
             if ($like) {

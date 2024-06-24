@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\FeedPostController; 
 use App\Http\Controllers\Api\V1\SubscribtionController;
 use App\Http\Controllers\Api\V1\UnsubscribeController;
-use App\Http\Controllers\Api\V1\CommentsController;
+use App\Http\Controllers\Api\V1\CommentsController; 
 use App\Http\Controllers\Api\V1\LikeController;
 
 // Route::get('/user', function (Request $request) {
