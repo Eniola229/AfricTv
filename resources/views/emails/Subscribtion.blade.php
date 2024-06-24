@@ -63,7 +63,7 @@
             <a href="{{ url('/') }}" class="button">Login</a>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} AfricGEM. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} AfricTv. All rights reserved.</p>
         </div>
     </div>
 </body>

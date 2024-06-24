@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AfricGEM Profile Update Alert</title>
+    <title>AfricTv Profile Update Alert</title>
 </head>
 <body>
     <h2>Dear {{ $user->name }},</h2>
