@@ -34,7 +34,7 @@ Route::get('readfeedpost', [FeedPostController::class, 'readfeedpost']);
 //Read Comment End Point
 Route::get('readcomment', [CommentsController::class, 'readcomment']);
 //Read Like End Point
-Route::get('readlikes', [CommentsController::class, 'readlikes']);
+Route::get('readlikes', [LikeController::class, 'readlikes']);
 
 
 

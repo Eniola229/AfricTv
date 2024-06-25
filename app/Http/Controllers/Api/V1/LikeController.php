@@ -58,7 +58,7 @@ class LikeController extends Controller
         public function readlikes(Request $request)
         {
             $validated = $request->validate([
-                'like_id' => 'required|integer',
+                'post_id' => 'required|integer',
             ]);
 
             $postId = $validated['post_id'];
