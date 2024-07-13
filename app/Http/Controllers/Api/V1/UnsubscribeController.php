@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Models\Subscribtion;
 use App\Mail\SubscribtionMail;
+use Illuminate\Support\Facades\Auth;
+
  
 class UnsubscribeController extends Controller
 {
@@ -17,8 +19,8 @@ class UnsubscribeController extends Controller
         {
             // Validate the request
             $request->validate([
-                "user_id" => "required",
-                "user_email" => "required",
+                // "user_id" => "required",
+                // "user_email" => "required",
                 "subscriber_id" => "required",
                 "subscriber_email" => "required",
             ]);
@@ -26,8 +28,8 @@ class UnsubscribeController extends Controller
              $unsubscribe = "1";
             // Create a new subscription record
             $unsubscribe = Subscribtion::create([
-                "user_id" => $request->user_id,
-                "user_email" => $request->user_email,
+                "user_id" => Auth::user()->id,,
+                "user_email" => $Auth::user()->email,
                 "subscriber_id" => $request->subscriber_id,
                 "subscriber_email" => $request->subscriber_email,
                 "unsubscribe" => $unsubscribe,

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Comments;
 use Intervention\Image\Facades\Image;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
+use Illuminate\Support\Facades\Auth;
 
 class CommentsController extends Controller
 {
@@ -14,9 +15,9 @@ class CommentsController extends Controller
         $request->validate([
             "post_id" => "required",
             "post_email" => "required",
-            "user_id" => "required",
-            "user_email" => "required|email",
-            "user_name" => "required",
+            // "user_id" => "required",
+            // "user_email" => "required|email",
+            // "user_name" => "required",
             "unique_id" => "required",
             "comments" => "required",
             "comments_vid_path" => "nullable|mimes:mp4,avi,mov,wmv,flv",
@@ -76,9 +77,9 @@ class CommentsController extends Controller
         $comments = Comments::create([
             "post_id" => $request->post_id,
             "post_email" => $request->post_email,
-            "user_id" => $request->user_id,
-            "user_email" => $request->user_email,
-            "user_name" => $request->user_name,
+            "user_id" => Auth::user()->id
+            "user_email" => Auth::user()->email,
+            "user_name" => Auth::user()->name,
             "unique_id" => $request->unique_id,
             "comments" => $request->comments,
             "comments_vid_path" => $videoPath,

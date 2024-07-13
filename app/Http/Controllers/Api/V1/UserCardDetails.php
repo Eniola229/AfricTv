@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CardDetails;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserCardDetails extends Controller
 {
     public function carddetails(Request $request) {
     $request->validate([
         "card_name" => "required",
-        "user_id" => "required",
-        "user_email" => "required|email",
+        // "user_id" => "required",
+        // "user_email" => "required|email",
         "card_number" => "required",
         "card_cvc_number" => "required",
         "expiration_date" => "required",
@@ -21,8 +23,8 @@ class UserCardDetails extends Controller
     // Create 
     $user = CardDetails::create([
         "card_name" => $request->card_name,
-        "user_id" => $request->user_id,
-        "user_email" => $request->user_email,
+        "user_id" => Auth::user()->id,
+        "user_email" => Auth::user()->email,
         "card_number" => $request->card_number,
         "card_cvc_number" => $request->card_cvc_number,
         "expiration_date" => $request->expiration_date,

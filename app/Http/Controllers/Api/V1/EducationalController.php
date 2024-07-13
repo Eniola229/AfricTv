@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Educational;
 use FFMpeg;
+use Illuminate\Support\Facades\Auth;
 
 class EducationalController extends Controller
 {
@@ -13,8 +14,8 @@ class EducationalController extends Controller
         { 
             // Data Validation
             $request->validate([ 
-                "user_id" => "required",
-                "unique_id" => "required",
+                // "user_id" => "required",
+                // "unique_id" => "required",
                 'post_vid_path' => 'array',
                 'post_vid_path.*' => 'nullable|mimes:mp4,avi,mov,wmv,flv',
                 "title" => "required|max:255",
@@ -52,8 +53,8 @@ class EducationalController extends Controller
 
             // Storing educational data
             $edu = Educational::create([
-                "user_id" => $request->user_id,
-                "unique_id" => $request->unique_id,
+                "user_id" => Auth::user()->id,
+                "unique_id" =>Auth::user()->unique_id,,
                 "post_vid_path" => json_encode($videoPaths),
                 "title" => $request->title,
                 "edu_views" => $request->edu_views ?? 0,

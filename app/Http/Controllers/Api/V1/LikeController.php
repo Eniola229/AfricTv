@@ -5,21 +5,22 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Likes;
+use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
      public function like(Request $request) {
         $request->validate([
-            "user_id" => "required",
-            "user_email" => "required",
+            // "user_id" => "required",
+            // "user_email" => "required",
             "post_id" => "required",
             "post_email" => "required",
             "reaction_type" => "required|max:55",
         ]);
 
         $likes = Likes::create([
-            "user_id" => $request->user_id,
-            "user_email" => $request->post_email,
+            "user_id" => Auth::user()->id,
+            "user_email" => Auth::user()->email,
             "post_id" => $request->post_id,
             "post_email" => $request->user_email,
             "reaction_type" => $request->user_name,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Intervention\Image\Facades\Image;
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -13,10 +14,10 @@ class PostController extends Controller
     { 
         // Data Validation
         $request->validate([ 
-            "user_id" => "required",
-            "user_name" => "required",
-            "unique_id" => "required", 
-            "user_email" => "required|email",
+            // "user_id" => "required",
+            // "user_name" => "required",
+            // "unique_id" => "required", 
+            // "user_email" => "required|email",
             "cover_image" => 'required|image|max:2048',
             'post_img_path' => 'array',
             'post_img_path.*' => 'nullable|image|max:2048',
@@ -141,11 +142,11 @@ class PostController extends Controller
 
         // Storing post data
         $post = Post::create([
-            "user_id" => $request->user_id,
-            "user_name" => $request->user_name,
+            "user_id" => Auth::user()->id,
+            "user_name" => Auth::user()->name,
             "post_id" => $postID,
-            "unique_id" => $request->unique_id,
-            "user_email" => $request->user_email,
+            "unique_id" => Auth::user()->unique_id,
+            "user_email" => Auth::user()->email,
             "cover_image" => $coverImagePath,
             "post_img_path" => json_encode($imagePaths),
             "post_vid_path" => $videoPath,
